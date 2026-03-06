@@ -1,0 +1,71 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// Structure to represent a Student
+struct Student {
+    string name;
+    int indexNumber;
+};
+
+// Function to save students to file
+void saveStudentsToFile(const vector<Student>& students, const string& filename) {
+    ofstream file(filename);
+    if (file.is_open()) {
+        for (const auto& student : students) {
+            file << student.name << "," << student.indexNumber << endl;
+        }
+        file.close();
+        cout << "Students saved to file." << endl;
+    } else {
+        cout << "Unable to open file for writing." << endl;
+    }
+}
+
+// Function to load students from file
+vector<Student> loadStudentsFromFile(const string& filename) {
+    vector<Student> students;
+    ifstream file(filename);
+    if (file.is_open()) {
+        string line, name;
+        int index;
+        while (getline(file, line)) {
+            size_t commaPos = line.find(',');
+            if (commaPos != string::npos) {
+                name = line.substr(0, commaPos);
+                index = stoi(line.substr(commaPos + 1));
+                students.push_back({name, index});
+            }
+        }
+        file.close();
+        cout << "Students loaded from file." << endl;
+    } else {
+        cout << "Unable to open file for reading." << endl;
+    }
+    return students;
+}
+
+int main() {
+    vector<Student> students = {
+        {"John Doe", 12345},
+        {"Jane Smith", 67890}
+    };
+
+    string filename = "students.txt";
+
+    // Save students to file
+    saveStudentsToFile(students, filename);
+
+    // Load students from file
+    vector<Student> loadedStudents = loadStudentsFromFile(filename);
+
+    // Display loaded students
+    for (const auto& student : loadedStudents) {
+        cout << "Name: " << student.name << ", Index: " << student.indexNumber << endl;
+    }
+
+    return 0;
+}
