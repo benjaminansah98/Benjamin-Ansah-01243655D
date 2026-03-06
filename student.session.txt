@@ -1,0 +1,72 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// Structure to represent attendance record
+struct AttendanceRecord {
+    int indexNumber;
+    string status; // Present, Absent, Late
+};
+
+// Function to save attendance to file
+void saveAttendanceToFile(const vector<AttendanceRecord>& records, const string& filename) {
+    ofstream file(filename);
+    if (file.is_open()) {
+        for (const auto& record : records) {
+            file << record.indexNumber << "," << record.status << endl;
+        }
+        file.close();
+        cout << "Attendance saved to file." << endl;
+    } else {
+        cout << "Unable to open file for writing." << endl;
+    }
+}
+
+// Function to load attendance from file
+vector<AttendanceRecord> loadAttendanceFromFile(const string& filename) {
+    vector<AttendanceRecord> records;
+    ifstream file(filename);
+    if (file.is_open()) {
+        string line, status;
+        int index;
+        while (getline(file, line)) {
+            size_t commaPos = line.find(',');
+            if (commaPos != string::npos) {
+                index = stoi(line.substr(0, commaPos));
+                status = line.substr(commaPos + 1);
+                records.push_back({index, status});
+            }
+        }
+        file.close();
+        cout << "Attendance loaded from file." << endl;
+    } else {
+        cout << "Unable to open file for reading." << endl;
+    }
+    return records;
+}
+
+int main() {
+    vector<AttendanceRecord> records = {
+        {12345, "Present"},
+        {67890, "Absent"},
+        {34567, "Late"}
+    };
+
+    string filename = "session_EE201_2023_09_01.txt";
+
+    // Save attendance to file
+    saveAttendanceToFile(records, filename);
+
+    // Load attendance from file
+    vector<AttendanceRecord> loadedRecords = loadAttendanceFromFile(filename);
+
+    // Display loaded attendance
+    for (const auto& record : loadedRecords) {
+        cout << "Index: " << record.indexNumber << ", Status: " << record.status << endl;
+    }
+
+    return 0;
+}
